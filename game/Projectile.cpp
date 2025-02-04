@@ -445,7 +445,15 @@ void idProjectile::Launch( const idVec3 &start, const idVec3 &dir, const idVec3 
 	physicsObj.SetGravity( gravVec );
 	physicsObj.SetContents( contents );
  	physicsObj.SetClipMask( clipMask | CONTENTS_WATER );
-	physicsObj.SetLinearVelocity( dir * speed.GetCurrentValue(gameLocal.time) + pushVelocity );
+
+	idVec3 newDir = dir;
+
+	newDir.x += gameLocal.random.CRandomFloat() * 0.5f;
+	newDir.y += gameLocal.random.CRandomFloat() * 0.5f;
+	newDir.z += gameLocal.random.CRandomFloat() * 0.3f;
+	newDir.Normalize();
+
+	physicsObj.SetLinearVelocity( newDir * speed.GetCurrentValue(gameLocal.time) + pushVelocity );
 	physicsObj.SetOrigin( start );
 	physicsObj.SetAxis( dir.ToMat3() );
 
@@ -530,6 +538,14 @@ void idProjectile::Think( void ) {
 				updateVelocity = false;
 			}
 		}
+
+		idVec3 velocity = physicsObj.GetLinearVelocity();
+
+		velocity.x += gameLocal.random.CRandomFloat() * 15.0f - 7.5f;
+		velocity.y += gameLocal.random.CRandomFloat() * 15.0f - 7.5f;
+		velocity.z += gameLocal.random.CRandomFloat() * 5.0f - 2.5f;
+
+		physicsObj.SetLinearVelocity(velocity);
 		
 		RunPhysics();
 		
