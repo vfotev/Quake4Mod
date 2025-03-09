@@ -3,6 +3,7 @@
 
 #include "../Game_local.h"
 #include "../Weapon.h"
+#include "../../../../../Users/victo/git/Quake4Mod/game/Weapon.h"
 
 #define BLASTER_SPARM_CHARGEGLOW		6
 
@@ -32,6 +33,8 @@ private:
 	idVec2				chargeGlow;
 	bool				fireForced;
 	int					fireHeldTime;
+	int                 ammoCount;
+	const int           maxAmmo = 50;
 
 	stateResult_t		State_Raise				( const stateParms_t& parms );
 	stateResult_t		State_Lower				( const stateParms_t& parms );
@@ -101,6 +104,10 @@ bool rvWeaponBlaster::UpdateAttack ( void ) {
 		}
 	}
 
+	if (ammoCount <= 0) {
+		return false;
+	}
+
 	// If the player is pressing the fire button and they have enough ammo for a shot
 	// then start the shooting process.
 	if ( wsfl.attack && gameLocal.time >= nextAttackTime ) {
@@ -149,12 +156,15 @@ void rvWeaponBlaster::Spawn ( void ) {
 	viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, 0 );
 	SetState ( "Raise", 0 );
 	
-	chargeGlow   = spawnArgs.GetVec2 ( "chargeGlow" );
-	chargeTime   = SEC2MS ( spawnArgs.GetFloat ( "chargeTime" ) );
-	chargeDelay  = SEC2MS ( spawnArgs.GetFloat ( "chargeDelay" ) );
+	//chargeGlow   = spawnArgs.GetVec2 ( "chargeGlow" );
+	//chargeTime   = SEC2MS ( spawnArgs.GetFloat ( "chargeTime" ) );
+	//chargeDelay  = SEC2MS ( spawnArgs.GetFloat ( "chargeDelay" ) );
+	
+	//fireHeldTime		= 0;
+	//fireForced			= false;
 
-	fireHeldTime		= 0;
-	fireForced			= false;
+	ammoCount = maxAmmo;
+	ammoType = BLASTER_AMMO_INDEX;
 			
 	Flashlight ( owner->IsFlashlightOn() );
 }
@@ -404,6 +414,10 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 	};	
 	switch ( parms.stage ) {
 		case FIRE_INIT:	
+			if ( ammoCount <= 0 ) {
+				SetState( "idle", 4 );
+				return SRESULT_DONE;
+			}
 
 			StopSound ( SND_CHANNEL_ITEM, false );
 			viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, 0 );
@@ -425,16 +439,18 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 			}
 
 
-	
-			if ( gameLocal.time - fireHeldTime > chargeTime ) {	
-				Attack ( true, 1, spread, 0, 1.0f );
-				PlayEffect ( "fx_chargedflash", barrelJointView, false );
-				PlayAnim( ANIMCHANNEL_ALL, "chargedfire", parms.blendFrames );
-			} else {
-				Attack ( false, 100, 10.0, 0, 1.0f );
-				PlayEffect ( "fx_normalflash", barrelJointView, false );
-				PlayAnim( ANIMCHANNEL_ALL, "fire", parms.blendFrames );
+			if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {  
+				if (gameLocal.time - fireHeldTime > chargeTime) {  
+					Attack(false, 1, 2.0f, 0.0f, 1.0f);
+					PlayEffect("fx_normalflash", barrelJointView, false);
+					PlayAnim(ANIMCHANNEL_ALL, "fire", parms.blendFrames);
+				} else {
+					StartSound("snd_noammo", SND_CHANNEL_WEAPON, 0, false, NULL);  
+				}
 			}
+			
+
+
 			fireHeldTime = 0;
 			
 			return SRESULT_STAGE(FIRE_WAIT);
