@@ -6,6 +6,9 @@
 #ifndef __GAME_WEAPON_H__
 #define __GAME_WEAPON_H__
 
+#define BLASTER_AMMO_INDEX              15
+#endif
+
 /*
 ===============================================================================
 

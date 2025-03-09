@@ -208,6 +208,7 @@ void idInventory::Clear( void ) {
 	secretAreasDiscovered = 0;
 
 	memset( ammo, 0, sizeof( ammo ) );
+	ammo[ BLASTER_AMMO_INDEX ] = 50;
 
 	ClearPowerUps();
 
@@ -1026,9 +1027,17 @@ idInventory::HasAmmo
 ===============
 */
 int idInventory::HasAmmo( int index, int amount ) {
+	if ( index == BLASTER_AMMO_INDEX ) {
+		return ammo[index];
+	}
+	
 	if ( ( index == 0 ) || !amount ) {
 		// always allow weapons that don't use ammo to fire
 		return -1;
+	}
+
+	if (index == BLASTER_AMMO_INDEX) {
+		return ammo[index];
 	}
 
 	// check if we have infinite ammo
@@ -1060,6 +1069,14 @@ idInventory::UseAmmo
 bool idInventory::UseAmmo( int index, int amount ) {
 	if ( !HasAmmo( index, amount ) ) {
 		return false;
+	}
+
+	if ( index == BLASTER_AMMO_INDEX ) {
+		if ( ammo[index] >= 0 ) {
+			ammo[index] -= amount;
+			ammoPredictTime = gameLocal.time;
+		}
+		return true;
 	}
 
 	// take an ammo away if not infinite
@@ -3373,6 +3390,13 @@ void idPlayer::UpdateHudAmmo( idUserInterface *_hud ) {
 			_hud->SetStateInt ( "player_totalammo", ammoamount - inclip );
 		}
 		_hud->SetStateInt ( "player_ammo", inclip );
+
+		if (weapon->GetAmmoType() == BLASTER_AMMO_INDEX && BLASTER_AMMO_INDEX >= 0 && BLASTER_AMMO_INDEX < 16) {
+			_hud->SetStateInt("blaster_ammo", inventory.ammo[BLASTER_AMMO_INDEX]);
+
+			gameLocal.Printf("Blaster Ammo Updated: %d\n", inventory.ammo[BLASTER_AMMO_INDEX]);
+		}
+
 	} else {
 		_hud->SetStateFloat ( "player_ammopct", (float)ammoamount / (float)weapon->maxAmmo );
 		_hud->SetStateInt ( "player_totalammo", ammoamount );
