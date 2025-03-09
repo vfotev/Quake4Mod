@@ -4,7 +4,6 @@
 #include "../Weapon.h"
 #include "../Game_local.h"
 
-
 #define BLASTER_SPARM_CHARGEGLOW		6
 
 class rvWeaponBlaster : public rvWeapon {
@@ -439,15 +438,17 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 			}
 
 
-			if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {  
-				if (gameLocal.time - fireHeldTime > chargeTime) {  
+			if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {
+				if (fireHeldTime == 0 || gameLocal.time - fireHeldTime > chargeTime) {
 					Attack(false, 1, 2.0f, 0.0f, 1.0f);
 					PlayEffect("fx_normalflash", barrelJointView, false);
 					PlayAnim(ANIMCHANNEL_ALL, "fire", parms.blendFrames);
-				} else {
-					StartSound("snd_noammo", SND_CHANNEL_WEAPON, 0, false, NULL);  
+				}
+				else {
+					StartSound("snd_noammo", SND_CHANNEL_WEAPON, 0, false, NULL);
 				}
 			}
+
 			
 
 
