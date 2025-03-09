@@ -1,9 +1,9 @@
 #include "../../idlib/precompiled.h"
 #pragma hdrstop
 
-#include "../Game_local.h"
 #include "../Weapon.h"
-#include "../../../../../Users/victo/git/Quake4Mod/game/Weapon.h"
+#include "../Game_local.h"
+
 
 #define BLASTER_SPARM_CHARGEGLOW		6
 
