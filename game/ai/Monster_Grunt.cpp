@@ -196,7 +196,15 @@ rvMonsterGrunt::OnDeath
 ================
 */
 void rvMonsterGrunt::OnDeath ( void ) {
+	gameLocal.Printf("OnDeath() triggered for entity: %s\n", GetEntityDefName());
 	RageStop ( );
+
+	if (idStr::Cmp(GetEntityDefName(), "monster_grunt") == 0) {
+		gameLocal.winConditionProgress++;
+		gameLocal.Printf("Objective Progress: %d/3\n", gameLocal.winConditionProgress);
+		gameLocal.Printf("Killed entity name: %s\n", GetEntityDefName());
+	}
+
 	return idAI::OnDeath ( );
 }
 

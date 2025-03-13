@@ -321,6 +321,7 @@ class rvGravityArea;
 
 class idGameLocal : public idGame {
 public:
+	int winConditionProgress;
 	idDict					serverInfo;				// all the tunable parameters, like numclients, etc
 	int						numClients;				// pulled from serverInfo and verified
 	idDict					userInfo[MAX_CLIENTS];	// client specific settings
@@ -339,7 +340,6 @@ public:
 	bool					sortPushers;			// true if active lists needs to be reordered to place pushers at the front
 	bool					sortTeamMasters;		// true if active lists needs to be reordered to place physics team masters before their slaves
 	idDict					persistentLevelInfo;	// contains args that are kept around between levels
-	int winConditionProgress;
 
 // RAVEN BEGIN
 // bdube: client entities

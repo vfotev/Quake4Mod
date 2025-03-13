@@ -419,6 +419,7 @@ extern idHashTable<rvViseme> *visemeTable33;
 void idGameLocal::Init( void *(*allocator)(size_t size), void (*deallocator)( void *ptr ), size_t (*msize)(void *ptr) ) {
 #else
 void idGameLocal::Init( void ) {
+	winConditionProgress = 0;
 #endif
 // RAVEN END
 	cmdSystem->AddCommand("loadCustomMap", Cmd_LoadCustomMap, CMD_FL_GAME, "Loads the map q4xtourney1");
@@ -3479,6 +3480,11 @@ idGameLocal::RunFrame
 	assert( !isClient );
 
 	player = GetLocalPlayer();
+
+	if (gameLocal.winConditionProgress >= 3) {
+		gameLocal.Printf("WIN CONDITION MET! Closing the game...");
+		cmdSystem->BufferCommandText(CMD_EXEC_NOW, "quit");
+	}
 
 	if ( !isMultiplayer && g_stopTime.GetBool() ) {
 
