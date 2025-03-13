@@ -1,4 +1,4 @@
-
+﻿
 #include "../../idlib/precompiled.h"
 #pragma hdrstop
 
@@ -72,6 +72,7 @@ void rvMonsterGrunt::Spawn ( void ) {
 	if ( spawnArgs.GetBool ( "preinject" ) ) {
 		RageStart ( );
 	}	
+	gameLocal.Printf("✅ Grunt spawned at: (%.2f, %.2f, %.2f)\n", GetPhysics()->GetOrigin().x, GetPhysics()->GetOrigin().y, GetPhysics()->GetOrigin().z);
 }
 
 /*
@@ -316,3 +317,5 @@ stateResult_t rvMonsterGrunt::State_Torso_LeapAttack ( const stateParms_t& parms
 	}
 	return SRESULT_ERROR;
 }
+
+

@@ -159,26 +159,35 @@ stateResult_t idAI::State_WakeUp ( const stateParms_t& parms ) {
 idAI::State_Passive
 ================
 */
-stateResult_t idAI::State_Passive ( const stateParms_t& parms ) {
-	if ( leader && !aifl.scripted ) {
-		if ( !GetEnemy() ) {
-			if ( combat.fl.aware && !combat.fl.ignoreEnemies ) {
-				//aggressive?  I know, doesn't make sense, but becomePassive is different from State_Passive
-				TurnTowardLeader( (focusType==AIFOCUS_LEADER) );
-			} else if ( focusType == AIFOCUS_LEADER && leader && leader.GetEntity() ) {
-				//passive
-				TurnToward( leader.GetEntity()->GetPhysics()->GetOrigin() );
-			}
+stateResult_t idAI::State_Passive(const stateParms_t& parms) {
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	if (player && player->weapon) {
+		// Ignore Blaster shots
+		if (player->weapon->GetAmmoType() == BLASTER_AMMO_INDEX) {
+			return SRESULT_WAIT; // AI remains in passive state
 		}
 	}
 
-	if ( UpdateAction ( ) ) {
+	enum {
+		STAGE_INIT,
+		STAGE_IDLE
+	};
+
+	switch (parms.stage) {
+	case STAGE_INIT:
+		StopMove(MOVE_STATUS_DONE);
+		SetAnimState(ANIMCHANNEL_LEGS, "Legs_Idle", 4);
+		SetAnimState(ANIMCHANNEL_TORSO, "Torso_Idle", 4);
+		return SRESULT_STAGE(STAGE_IDLE);
+
+	case STAGE_IDLE:
+		if (enemy.ent && !enemy.fl.visible) {
+			return SRESULT_DONE;
+		}
 		return SRESULT_WAIT;
 	}
-	if ( UpdateTactical ( TACTICALUPDATE_PASSIVEDELAY ) ) {
-		return SRESULT_DONE_WAIT;
-	}
-	return SRESULT_WAIT;
+
+	return SRESULT_ERROR;
 }
 
 /*

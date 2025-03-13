@@ -17,6 +17,7 @@ AI.cpp
 #include "../Projectile.h"
 #include "../spawner.h"
 #include "AI_Tactical.h"
+#include "../Weapon.h"
 
 const char* aiTalkMessageString [ ] = {
 	"None",
@@ -1130,14 +1131,50 @@ bool idAI::DoDormantTests ( void ) {
 	return idActor::DoDormantTests ( );
 }
 
+
+bool idAI::HasSeenPlayer() {
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	if (!player) return false;
+
+	trace_t result;
+	gameLocal.TracePoint(this, result, GetEyePosition(), player->GetEyePosition(), MASK_SOLID, this);
+
+	return (result.fraction >= 1.0f); 
+}
+
+bool idAI::HasHeardPlayer() {
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	if (!player) return false;
+
+	rvWeapon* weapon = player->weapon;
+	if (!weapon) return false;
+
+	if (weapon->GetAmmoType() == BLASTER_AMMO_INDEX) {
+		return false;  
+	}
+
+	return (gameLocal.time - weapon->GetLastFireTime() < 3000);
+}
+
 /*
 =====================
 idAI::Think
 =====================
 */
 void idAI::Think( void ) {
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	if (!player) {
+		idActor::Think(); 
+		return;
+	}
 
-	// if we are completely closed off from the player, don't do anything at all
+	if (!HasSeenPlayer() && !HasHeardPlayer()) {
+		StopMove(MOVE_STATUS_DONE); 
+		return; 
+	}
+
+	idActor::Think();
+
 	if ( CheckDormant() ) {
 		return;
 	}
@@ -4855,6 +4892,15 @@ idAI::ReactToShotAt
 ============
 */
 void idAI::ReactToShotAt ( idEntity* attacker, const idVec3 &origOrigin, const idVec3 &origDir ) {
+	if (attacker && attacker->IsType(idPlayer::GetClassType())) {
+		idPlayer* player = static_cast<idPlayer*>(attacker);
+
+		int weaponIndex = player->GetCurrentWeapon();
+
+		if (player->inventory.ammoIndices[weaponIndex] == BLASTER_AMMO_INDEX) {
+			return;
+		}
+	}
 	if ( g_perfTest_aiNoDodge.GetBool() ) {
 		return;
 	}

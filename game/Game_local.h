@@ -339,6 +339,7 @@ public:
 	bool					sortPushers;			// true if active lists needs to be reordered to place pushers at the front
 	bool					sortTeamMasters;		// true if active lists needs to be reordered to place physics team masters before their slaves
 	idDict					persistentLevelInfo;	// contains args that are kept around between levels
+	int winConditionProgress;
 
 // RAVEN BEGIN
 // bdube: client entities

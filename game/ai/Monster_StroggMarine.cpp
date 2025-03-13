@@ -95,6 +95,7 @@ rvMonsterStroggMarine::Spawn
 ================
 */
 void rvMonsterStroggMarine::Spawn ( void ) {
+	stateThread.SetState("state_Idle");
 	actionStrafe.Init  ( spawnArgs, "action_strafe",	NULL,	0 );
 	actionCrouchRangedAttack.Init  ( spawnArgs, "action_crouchRangedAttack",	NULL, AIACTIONF_ATTACK );
 	actionRollAttack.Init  ( spawnArgs, "action_rollAttack",	NULL, AIACTIONF_ATTACK );
@@ -546,11 +547,29 @@ stateResult_t rvMonsterStroggMarine::State_Torso_RangedAttack ( const stateParms
 			}
 			return SRESULT_WAIT;
 		
-		case STAGE_SHOOT:
-			PlayAnim ( ANIMCHANNEL_TORSO, va("range_attack%d_loop", fireAnimNum), 0 );
+		case STAGE_SHOOT: {
+			PlayAnim(ANIMCHANNEL_TORSO, va("range_attack%d_loop", fireAnimNum), 0);
+
+			// Declare variables inside this scope
+			idActor* owner = this; // AI itself is the owner
+			const char* weaponDef = spawnArgs.GetString("def_weapon", "");
+
+			// If AI is using the Blaster, ignore it
+			if (idStr::Cmp(weaponDef, "weapon_blaster") == 0) {
+				return SRESULT_WAIT; // AI does not react to Blaster
+			}
+
+			// If not using the Blaster, play fire sound
+			if (idStr::Cmp(weaponDef, "weapon_blaster") != 0) {
+				StartSound("snd_weapon_fire", SND_CHANNEL_WEAPON, 0, false, 0);
+			}
+
 			shots--;
 			shotsFired++;
-			return SRESULT_STAGE ( STAGE_SHOOT_WAIT );
+			return SRESULT_STAGE(STAGE_SHOOT_WAIT);
+
+			break; // Don't forget this break!
+		}
 		
 		case STAGE_SHOOT_WAIT:
 			// When the shoot animation is done either play another shot animation

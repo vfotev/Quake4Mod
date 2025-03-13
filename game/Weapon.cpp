@@ -2622,7 +2622,7 @@ void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, con
 	}
 	
 	// Let the AI know about the new attack
-	if ( !gameLocal.isMultiplayer ) {
+	if ( !gameLocal.isMultiplayer && weaponDef->GetName() != "blaster") {
 		aiManager.ReactToPlayerAttack ( owner, muzzleOrigin, muzzleAxis[0] );
 	}
 		

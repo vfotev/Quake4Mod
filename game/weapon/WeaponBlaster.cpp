@@ -338,6 +338,8 @@ stateResult_t rvWeaponBlaster::State_Idle ( const stateParms_t& parms ) {
 rvWeaponBlaster::State_Charge
 ================
 */
+
+
 stateResult_t rvWeaponBlaster::State_Charge ( const stateParms_t& parms ) {
 	enum {
 		CHARGE_INIT,
@@ -346,7 +348,7 @@ stateResult_t rvWeaponBlaster::State_Charge ( const stateParms_t& parms ) {
 	switch ( parms.stage ) {
 		case CHARGE_INIT:
 			viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, chargeGlow[0] );
-			StartSound ( "snd_charge", SND_CHANNEL_ITEM, 0, false, NULL );
+			//StartSound ( "snd_charge", SND_CHANNEL_ITEM, 0, false, NULL );
 			PlayCycle( ANIMCHANNEL_ALL, "charging", parms.blendFrames );
 			return SRESULT_STAGE ( CHARGE_WAIT );
 			
@@ -371,6 +373,7 @@ stateResult_t rvWeaponBlaster::State_Charge ( const stateParms_t& parms ) {
 	return SRESULT_ERROR;	
 }
 
+
 /*
 ================
 rvWeaponBlaster::State_Charged
@@ -386,8 +389,8 @@ stateResult_t rvWeaponBlaster::State_Charged ( const stateParms_t& parms ) {
 			viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, 1.0f  );
 
 			StopSound ( SND_CHANNEL_ITEM, false );
-			StartSound ( "snd_charge_loop", SND_CHANNEL_ITEM, 0, false, NULL );
-			StartSound ( "snd_charge_click", SND_CHANNEL_BODY, 0, false, NULL );
+			//StartSound ( "snd_charge_loop", SND_CHANNEL_ITEM, 0, false, NULL );
+			//StartSound ( "snd_charge_click", SND_CHANNEL_BODY, 0, false, NULL );
 			return SRESULT_STAGE(CHARGED_WAIT);
 			
 		case CHARGED_WAIT:
@@ -440,15 +443,13 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 
 			if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {
 				if (fireHeldTime == 0 || gameLocal.time - fireHeldTime > chargeTime) {
-					Attack(false, 1, 2.0f, 0.0f, 10.0f);
+					Attack(false, 1, 2.0f, 0.0f, 150.0f);
 					PlayEffect("fx_normalflash", barrelJointView, false);
 					PlayAnim(ANIMCHANNEL_ALL, "fire", parms.blendFrames);
 				}
-				else {
-					StartSound("snd_noammo", SND_CHANNEL_WEAPON, 0, false, NULL);
-				}
 			}
 
+			lastFireTime = gameLocal.time;
 
 
 			fireHeldTime = 0;
@@ -466,6 +467,7 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 			return SRESULT_WAIT;
 	}			
 	return SRESULT_ERROR;
+	lastFireTime = gameLocal.time;
 }
 
 /*

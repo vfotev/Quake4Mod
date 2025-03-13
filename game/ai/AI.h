@@ -477,7 +477,8 @@ public:
    	bool					IsFacingEnt						( idEntity* targetEnt );
  	bool					IsCoverValid					( void ) const;
 	virtual bool			IsCrouching						( void ) const;
-
+	bool					HasSeenPlayer();
+	bool					HasHeardPlayer();
 
 public:
 

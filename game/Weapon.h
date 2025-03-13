@@ -209,6 +209,7 @@ public:
 	void				UseAmmo						( int amount );
 	void				SetClip						( int amount );
 	int					TotalAmmoCount				( void ) const;
+	int GetLastFireTime() const { return lastFireTime; }
 
 	// Attack
 	bool				PerformAttack				( idVec3& muzzleOrigin, idMat3& muzzleAxis, float dmgPower );
@@ -239,6 +240,8 @@ public:
 	void				ExitCinematic				( void );
 
 protected:
+
+	int lastFireTime = 0;
 
 	virtual void		OnLaunchProjectile			( idProjectile* proj );
 
