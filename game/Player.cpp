@@ -1,4 +1,4 @@
-// RAVEN BEGIN
+﻿// RAVEN BEGIN
 // bdube: note that this file is no longer merged with Doom3 updates
 //
 // MERGE_DATE 09/30/2004
@@ -8622,6 +8622,8 @@ void idPlayer::PerformImpulse( int impulse ) {
 		case IMPULSE_125:	AttemptToBuyItem( "damage_boost" );					break;
 		case IMPULSE_126:	break; // Unused
 		case IMPULSE_127:	break; // Unused
+
+		
 // RITUAL END
 
 		case IMPULSE_50: {
@@ -14100,5 +14102,14 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 
 	return weaponNum;
 }
+
+void idPlayer::LoadCustomMap() {
+	gameLocal.Printf("Loading map q4xtourney1...\n");
+
+	// ✅ Load the map using gameLocal.CheatExecute()
+	cmdSystem->BufferCommandText(CMD_EXEC_NOW, "map mp/q4xtourney1");
+}
+
+
 
 // RITUAL END

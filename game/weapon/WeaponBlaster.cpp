@@ -440,7 +440,7 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 
 			if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {
 				if (fireHeldTime == 0 || gameLocal.time - fireHeldTime > chargeTime) {
-					Attack(false, 1, 2.0f, 0.0f, 1.0f);
+					Attack(false, 1, 2.0f, 0.0f, 10.0f);
 					PlayEffect("fx_normalflash", barrelJointView, false);
 					PlayAnim(ANIMCHANNEL_ALL, "fire", parms.blendFrames);
 				}
@@ -449,7 +449,6 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 				}
 			}
 
-			
 
 
 			fireHeldTime = 0;

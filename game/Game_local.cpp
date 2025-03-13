@@ -396,6 +396,13 @@ void idGameLocal::Clear( void ) {
 	}
 }
 
+void Cmd_LoadCustomMap(const idCmdArgs& args) {
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	if (player) {
+		player->LoadCustomMap();
+	}
+}
+
 /*
 ===========
 idGameLocal::Init
@@ -414,6 +421,7 @@ void idGameLocal::Init( void *(*allocator)(size_t size), void (*deallocator)( vo
 void idGameLocal::Init( void ) {
 #endif
 // RAVEN END
+	cmdSystem->AddCommand("loadCustomMap", Cmd_LoadCustomMap, CMD_FL_GAME, "Loads the map q4xtourney1");
 	const idDict *dict;
 	idAAS *aas;
 

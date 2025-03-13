@@ -303,6 +303,7 @@ public:
 
 	int						lastHitTime;			// last time projectile fired by player hit target
 	int						lastSavingThrowTime;	// for the "free miss" effect
+	void LoadCustomMap();
 
 	struct playerFlags_s {
 		bool		forward			:1;

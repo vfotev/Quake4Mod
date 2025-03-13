@@ -2667,6 +2667,11 @@ void rvWeapon::LaunchProjectiles ( idDict& dict, const idVec3& muzzleOrigin, con
 		} else {
 			dict.SetInt( "instance", owner->GetInstance() );
 			gameLocal.SpawnEntityDef( dict, &ent, false );
+			if (!ent) {
+				common->Printf("ERROR: Projectile creation failed!\n");
+				return;
+			}
+
 		}
 
 		// Make sure it spawned
