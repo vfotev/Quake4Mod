@@ -43,6 +43,12 @@ float Cmd_GetFloatArg( const idCmdArgs &args, int &argNum ) {
 	return atof( value );
 }
 
+void Cmd_PerformUse(const idCmdArgs& args) {
+	if (!gameLocal.GetLocalPlayer()) {
+		return;
+	}
+	gameLocal.GetLocalPlayer()->PerformUse();
+}
 /*
 ===================
 Cmd_EntityList_f
@@ -3114,6 +3120,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand( "flashlight",			Cmd_Flashlight_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"toggle actor's flashlight", idGameLocal::ArgCompletion_AIName );
 	
 	cmdSystem->AddCommand( "shuffleTeams",			Cmd_ShuffleTeams_f,			CMD_FL_GAME,				"shuffle teams" );
+	cmdSystem->AddCommand("use", Cmd_PerformUse, CMD_FL_GAME, "Triggers use");
 // RAVEN BEGIN
 // bdube: not using id effect system
 //	cmdSystem->AddCommand( "testFx",				Cmd_TestFx_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"tests an FX system", idCmdSystem::ArgCompletion_Decl<DECL_FX> );

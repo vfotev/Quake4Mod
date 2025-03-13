@@ -971,6 +971,11 @@ bool idInventory::Give( idPlayer *owner, const idDict &spawnArgs, const char *st
  					}
 					if( !checkOnly ) {
  						weapons |= ( 1 << i );
+
+						if (weaponName == "weapon_rocketlauncher") {
+							gameLocal.winConditionProgress++;
+							gameLocal.Printf("Rocket Launcher Collected! Progress: %d\n", gameLocal.winConditionProgress);
+						}
 					}
  					tookWeapon = true;
  				}
@@ -6605,6 +6610,40 @@ bool idPlayer::Collide( const trace_t &collision, const idVec3 &velocity ) {
 		}
 	}
 	return false;
+}
+
+void idPlayer::PerformUse() {
+	trace_t trace;
+	idEntity* ent;
+
+	gameLocal.TracePoint(this, trace, GetEyePosition(), GetEyePosition() + viewAngles.ToForward() * 100, MASK_ALL, this);
+
+	ent = gameLocal.entities[trace.c.entityNum];
+
+	if (ent) {
+		gameLocal.Printf("Interacting with entity: %s\n", ent->GetEntityDefName());
+		gameLocal.Printf("Entity Name in SpawnArgs: %s\n", ent->spawnArgs.GetString("name"));
+
+		// Check if entity is func_static AND has the correct name
+		if (idStr::Cmp(ent->GetEntityDefName(), "func_static") == 0 &&
+			idStr::Cmp(ent->spawnArgs.GetString("name"), "interactive_box") == 0) {
+
+			gameLocal.winConditionProgress++;
+			gameLocal.Printf("Objective Progress: %d/3\n", gameLocal.winConditionProgress);
+		}
+		else {
+			gameLocal.Printf("Condition failed. Entity: %s, Name: %s\n",
+				ent->GetEntityDefName(),
+				ent->spawnArgs.GetString("name"));
+		}
+
+		if (gameLocal.winConditionProgress >= 3) {
+			gameLocal.Printf("WIN CONDITION MET! Closing the game...\n");
+			cmdSystem->BufferCommandText(CMD_EXEC_NOW, "quit");
+		}
+	}
+
+	gameLocal.Printf("PerformUse() triggered!\n");
 }
 
 /*

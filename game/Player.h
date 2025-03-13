@@ -453,6 +453,7 @@ public:
 	void					SpawnFromSpawnSpot( void );
 	void					SpawnToPoint( const idVec3	&spawn_origin, const idAngles &spawn_angles );
 	void					SetClipModel( bool forceSpectatorBBox = false );	// spectator mode uses a different bbox size
+	void PerformUse();
 
 	void					SavePersistantInfo( void );
 	void					RestorePersistantInfo( void );
