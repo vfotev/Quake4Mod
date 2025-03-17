@@ -20,10 +20,11 @@ This mod aims to recreate Metal Gear mechanics in Quake 4. In this mod, the play
 2. In the main menu, click on **Mods**.
 3. Select **MGSQ**.
 4. Click the **Load Mod** button.
-5. Once loaded into the mod, click on the **Begin Journey** button and choose your desired difficulty.
-6. Press **Escape** to skip the intro cutscene after the loading screen.
-7. Once in-game, press **P** on the keyboard to load into the mod.
-8. Enjoy playing the mod!
+5. Press escape until you see the mouse cursor
+6. Once loaded into the mod, click on the **Begin Journey** button and choose your desired difficulty.
+7. Press **Escape** to skip the intro cutscene after the loading screen.
+8. Once in-game, press **P** on the keyboard to load into the mod.
+9. Enjoy playing the mod!
 
 ## New Control Bindings
 - **P** - Loads into the mod after clicking play and skips the intro cutscene. Can also be used as a reset button.
