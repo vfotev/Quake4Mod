@@ -156,11 +156,12 @@ void rvWeaponBlaster::Spawn ( void ) {
 	SetState ( "Raise", 0 );
 	
 	//chargeGlow   = spawnArgs.GetVec2 ( "chargeGlow" );
-	//chargeTime   = SEC2MS ( spawnArgs.GetFloat ( "chargeTime" ) );
+	chargeTime   = SEC2MS ( spawnArgs.GetFloat ( "chargeTime", "0.5"));
 	//chargeDelay  = SEC2MS ( spawnArgs.GetFloat ( "chargeDelay" ) );
 	
 	//fireHeldTime		= 0;
 	//fireForced			= false;
+	wfl.silent_fire = true;
 
 	ammoCount = maxAmmo;
 	ammoType = BLASTER_AMMO_INDEX;
@@ -249,7 +250,7 @@ stateResult_t rvWeaponBlaster::State_Raise( const stateParms_t& parms ) {
 	switch ( parms.stage ) {
 		case RAISE_INIT:			
 			SetStatus ( WP_RISING );
-			PlayAnim( ANIMCHANNEL_ALL, "raise", parms.blendFrames );
+			SetState("Idle", 4);
 			return SRESULT_STAGE(RAISE_WAIT);
 			
 		case RAISE_WAIT:
@@ -441,12 +442,23 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 			}
 
 
-			if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {
-				if (fireHeldTime == 0 || gameLocal.time - fireHeldTime > chargeTime) {
+			if (fireHeldTime == 0 || gameLocal.time - fireHeldTime > chargeTime) {
+				gameLocal.Printf("Fire condition met, attempting to fire...\n");
+
+				if (owner->inventory.UseAmmo(BLASTER_AMMO_INDEX, 1)) {
+					gameLocal.Printf("Ammo used successfully, firing blaster...\n");
+
 					Attack(false, 1, 2.0f, 0.0f, 150.0f);
 					PlayEffect("fx_normalflash", barrelJointView, false);
 					PlayAnim(ANIMCHANNEL_ALL, "fire", parms.blendFrames);
 				}
+				else {
+					gameLocal.Printf("ERROR: Not enough ammo or UseAmmo failed!\n");
+				}
+			}
+			else {
+				gameLocal.Printf("Fire condition NOT met! fireHeldTime: %d, chargeTime: %d, gameLocal.time: %d\n",
+					fireHeldTime, chargeTime, gameLocal.time);
 			}
 
 			lastFireTime = gameLocal.time;
@@ -457,10 +469,10 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 			return SRESULT_STAGE(FIRE_WAIT);
 		
 		case FIRE_WAIT:
-			if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) ) {
-				SetState ( "Idle", 4 );
-				return SRESULT_DONE;
-			}
+			//if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) ) {
+			//	SetState ( "Idle", 4 );
+			//	return SRESULT_DONE;
+			//}
 			if ( UpdateFlashlight ( ) || UpdateAttack ( ) ) {
 				return SRESULT_DONE;
 			}
